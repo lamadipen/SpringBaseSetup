@@ -15,14 +15,15 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-
 	<mvc:annotation-driven />
 	<context:component-scan base-package="com.*" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
 		in the /WEB-INF/views directory -->
-	<bean id = "viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
 		<property name="prefix" value="/WEB-INF/views/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
@@ -35,5 +36,54 @@
 		up static resources in the ${webappRoot}/resources/ directory -->
 	<!-- <mvc:resources mapping="/resources/**" location="/resources/" /> -->
 
+	<!-- date source bean configuration -->
+	<bean name="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="url" value="jdbc:mysql://localhost/cs544"></property>
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="dipen@123"></property>
+	</bean>
+	<!-- date source bean configuration -->
 
+	<!-- hibernet bean configuration -->
+	<bean name="hibernateProperties"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+				<prop key="connection.pool_size">1</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<!-- <prop key="hibernate.current_session_context_class">thread</prop> -->
+				<prop key="current_session_context_class">thread</prop>
+
+			</props>
+		</property>
+	</bean>
+	<!-- hibernet bean configuration -->
+
+	<!-- session factory bean configuration -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="hibernateProperties" ref="hibernateProperties"></property>
+		<property name="annotatedClasses">
+			<list>
+				<value>edu.mum.ex2.domain.User</value>
+				<value>edu.mum.ex2.domain.Task</value>
+				<value>edu.mum.ex2.domain.Project</value>
+				<value>edu.mum.ex2.domain.Beneficiary</value>
+			</list>
+		</property>
+	</bean>
+	<!-- session factory bean configuration -->
+	
+	<!-- transaction manager bean configuration -->
+	<tx:annotation-driven transaction-manager="txManager" />
+	<bean id="txManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<!-- transaction manager bean configuration -->
 </beans>
